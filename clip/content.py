@@ -15,7 +15,7 @@ CONTENT_MAP = { MELEE: [MANGO] }
 # Abstract class for ContentCompilers
 class ContentCompiler(ABC):
     @abstractmethod
-    def fetchClips(self):
+    def fetch_clips(self):
         pass
 
 # Presets
@@ -24,15 +24,15 @@ class PremiumMelee(ContentCompiler):
         self.creators = [MANGO]
         self.queries = []
 
-        base_query = "twitch api get clips -q first=10"
+        base_query = "twitch api get clips -q first=20"
         for creator in self.creators:
             self.queries.append(f"{base_query} -q broadcaster_id={creator}")
 
-    def fetchClips(self):
-        aggregate = self._aggregateClips()
-        return self._filterResults(aggregate)
+    def fetch_clips(self):
+        aggregate = self._aggregate_clips()
+        return self._filter_results(aggregate)
     
-    def _aggregateClips(self):
+    def _aggregate_clips(self):
         aggregate = []
         for query in self.queries:
             stream = os.popen(query)
@@ -41,7 +41,7 @@ class PremiumMelee(ContentCompiler):
         
         return aggregate
     
-    def _filterResults(self, all_clips): 
+    def _filter_results(self, all_clips): 
         filtered_results = []
         for clip in all_clips:
             if clip["game_id"] == MELEE:
