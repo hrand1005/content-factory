@@ -11,12 +11,26 @@ class ClipDatabase():
         self.table = Table('clips', self.metadata_obj,
             Column('id', Integer, primary_key=True),
             Column('url', String(100), nullable=False, unique=True),
-            Column('time_entered', DateTime, default=datetime.datetime.now)
+            Column('time_entered', DateTime, default=datetime.datetime.now())
         )
 
-        self.metadata_obj.create_all(engine)
-        Session = sessionmaker(bind = engine)
+        self.metadata_obj.create_all(self.engine)
+        Session = sessionmaker(bind = self.engine)
         self.session = Session()
-    
-    def get_conn(self):
-        return self.engine.connect()
+        self.db_conn = self.engine.connect()
+
+    def insert_clips(self, clips):
+        for clip in clips:
+            stmt = insert(self.table).values(url=clip).prefix_with('OR IGNORE')
+            self.db_conn.execute(stmt)
+        
+        self.session.commit()
+
+    def verify_clips(self, clips):
+        verified_unique_urls = []
+        for url in clips:
+            # stmt = select.where(self.table.c.url == url)
+            if not self.session.query(exists().where(self.table.c.url == url)).scalar():
+                verified_unique_urls.append(url)
+        
+        return verified_unique_urls

@@ -11,7 +11,7 @@ def main():
     # get db connection
     verified_clips = db_util.verified_unique("PremiumMelee", clips)
     
-    #db_util.insert_clips(db_conn, table, clips)
+    db_util.insert_clips("PremiumMelee", verified_clips)
     #check if clips are in db 
     #verified_clips = db.verifiedUnique(db_conn, table, clips)
 
@@ -22,7 +22,7 @@ def main():
     #then add clips to database
     #then delete the local clips, but keep the vid
     #print url to created vid
-    print(clips)
+    print(verified_clips)
 
 
 
