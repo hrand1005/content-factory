@@ -1,4 +1,6 @@
+import os
 import sys
+import urllib.request
 import clip.content as content
 
 # def getToken():
@@ -34,3 +36,11 @@ def get_clips(preset):
 
     return just_urls(clip_dicts)
     #print(f"And here are just the urls: {clip_urls}\n")
+
+def get_clips_with_info(preset):
+    strategy = parse_args(preset)
+    return strategy.fetch_clips()
+    #print(f"Here are the clip dicts: {clip_dicts}\n")
+
+    #print(f"And here are just the urls: {clip_urls}\n")
+

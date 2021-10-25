@@ -2,7 +2,11 @@ from clip import clip_util
 from db import db_util
 
 def main():
+
+    #TODO: Determine strategy here at runtime?
+
     clips = clip_util.get_clips("PremiumMelee")
+    clip_info = clip_util.get_clips_with_info("PremiumMelee")
 
     if len(clips) == 0:
         print("No new clips to fetch for PremiumMelee.\nExiting...")
@@ -11,6 +15,8 @@ def main():
     # get db connection
     verified_clips = db_util.verified_unique("PremiumMelee", clips)
     
+    db_util.download_clips(clip_info, verified_clips)
+
     db_util.insert_clips("PremiumMelee", verified_clips)
     #check if clips are in db 
     #verified_clips = db.verifiedUnique(db_conn, table, clips)
@@ -22,7 +28,7 @@ def main():
     #then add clips to database
     #then delete the local clips, but keep the vid
     #print url to created vid
-    print(verified_clips)
+    #print(verified_clips)
 
 
 
