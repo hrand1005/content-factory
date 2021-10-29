@@ -35,10 +35,8 @@ def main():
 
     #then compile the clips randomly into a vid
     #then upload vid
-    #then add clips to database
     #then delete the local clips, but keep the vid
     #print url to created vid
-    #print(verified_clips)
 
 
 if __name__ == "__main__":

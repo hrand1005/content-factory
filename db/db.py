@@ -1,3 +1,6 @@
+# Defines database to manage downloaded clips. The big idea is to prevent
+# duplicate downloads.
+
 import datetime
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
