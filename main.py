@@ -1,23 +1,34 @@
-from clip import clip_util
+from clip import content, clip
 from db import db_util
+
 
 def main():
 
-    #TODO: Determine strategy here at runtime?
+    #TODO: Determine strategy here at runtime
+    if True:
+        strategy = content.PremiumMelee()
+    else:
+        print("Strategy '' not found. \nExiting...")
+        exit(1)
 
-    clips = clip_util.get_clips("PremiumMelee")
-    clip_info = clip_util.get_clips_with_info("PremiumMelee")
+    clips = strategy.fetch_clips()
+    clip_urls = clip.just_urls(clips)
 
     if len(clips) == 0:
         print("No new clips to fetch for PremiumMelee.\nExiting...")
-        exit(0)
+        exit(1)
 
     # get db connection
-    verified_clips = db_util.verified_unique("PremiumMelee", clips)
+    verified_clips = db_util.verified_unique("PremiumMelee", clip_urls)
     
-    db_util.download_clips(clip_info, verified_clips)
+    if len(verified_clips) == 0:
+        print("Retrieved clips already exist in the db.\nExiting...")
+        exit(1)
+
+    db_util.download_clips(clips, verified_clips)
 
     db_util.insert_clips("PremiumMelee", verified_clips)
+
     #check if clips are in db 
     #verified_clips = db.verifiedUnique(db_conn, table, clips)
 
@@ -29,7 +40,6 @@ def main():
     #then delete the local clips, but keep the vid
     #print url to created vid
     #print(verified_clips)
-
 
 
 if __name__ == "__main__":

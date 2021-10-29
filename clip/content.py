@@ -1,7 +1,9 @@
+# Contains content constants and strategies, each inheriting from
+# an abstract base class 'ContentCompiler'
+
 import os
 import json
 from abc import ABC, abstractmethod
-#import datetime
 
 # Creators
 MANGO = "26551727"
