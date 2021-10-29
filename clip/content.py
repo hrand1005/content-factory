@@ -22,7 +22,9 @@ class ContentCompiler(ABC):
 
 # Presets
 class PremiumMelee(ContentCompiler):
+
     def __init__(self):
+        self.name = "PremiumMelee"
         self.creators = [MANGO]
         self.queries = []
 

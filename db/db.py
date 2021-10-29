@@ -1,4 +1,3 @@
-import os
 import datetime
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
@@ -19,14 +18,14 @@ class ClipDatabase():
         self.session = Session()
         self.db_conn = self.engine.connect()
 
-    def insert_clips(self, clips):
+    def insert_clip_urls(self, clips):
         for clip in clips:
             stmt = insert(self.table).values(url=clip).prefix_with('OR IGNORE')
             self.db_conn.execute(stmt)
         
         self.session.commit()
 
-    def verify_clips(self, clips):
+    def verify_clip_urls(self, clips):
         verified_unique_urls = []
         for url in clips:
             # stmt = select.where(self.table.c.url == url)

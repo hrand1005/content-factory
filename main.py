@@ -1,5 +1,5 @@
 from clip import content, clip
-from db import db_util
+from db import db
 
 
 def main():
@@ -18,16 +18,18 @@ def main():
         print("No new clips to fetch for PremiumMelee.\nExiting...")
         exit(1)
 
+    database = db.ClipDatabase(strategy.name)
+
     # get db connection
-    verified_clips = db_util.verified_unique("PremiumMelee", clip_urls)
+    verified_clip_urls = database.verify_clip_urls(clip_urls)
     
-    if len(verified_clips) == 0:
+    if len(verified_clip_urls) == 0:
         print("Retrieved clips already exist in the db.\nExiting...")
         exit(1)
 
-    db_util.download_clips(clips, verified_clips)
+    clip.download_clips(clips, verified_clip_urls)
 
-    db_util.insert_clips("PremiumMelee", verified_clips)
+    database.insert_clip_urls(verified_clip_urls)
 
     #check if clips are in db 
     #verified_clips = db.verifiedUnique(db_conn, table, clips)
