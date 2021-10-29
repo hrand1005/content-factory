@@ -1,14 +1,26 @@
+import argparse
 from clip import content, clip
 from db import db
 
 
-def main():
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Download clips, compile them into a video, and upload it to youtube.")
+    parser.add_argument('--preset',
+        help="Name of the preset with configurations for content regurgitation.")
+    args = parser.parse_args()
 
-    #TODO: Determine strategy here at runtime
-    if True:
+    return args.preset
+
+
+def main():
+    preset = parse_args()
+
+    if preset == "PremiumMelee":
         strategy = content.PremiumMelee()
+        database = db.ClipDatabase(preset)
     else:
-        print("Strategy '' not found. \nExiting...")
+        print(f"Strategy '{preset}' not found. \nExiting...")
         exit(1)
 
     clips = strategy.fetch_clips()
@@ -18,9 +30,6 @@ def main():
         print("No new clips to fetch for PremiumMelee.\nExiting...")
         exit(1)
 
-    database = db.ClipDatabase(strategy.name)
-
-    # get db connection
     verified_clip_urls = database.verify_clip_urls(clip_urls)
     
     if len(verified_clip_urls) == 0:
