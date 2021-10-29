@@ -27,14 +27,11 @@ def main():
         print("Retrieved clips already exist in the db.\nExiting...")
         exit(1)
 
+    # TODO: error handling might be nice, return information about how many 
+    # clips were downloaded successfully
     clip.download_clips(clips, verified_clip_urls)
 
     database.insert_clip_urls(verified_clip_urls)
-
-    #check if clips are in db 
-    #verified_clips = db.verifiedUnique(db_conn, table, clips)
-
-    #then download the URLs
 
     #then compile the clips randomly into a vid
     #then upload vid
