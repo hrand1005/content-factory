@@ -1,6 +1,7 @@
 import argparse
 from clip import content, clip
 from db import db
+from moviepy.editor import *
 
 
 def parse_args():
@@ -42,6 +43,14 @@ def main():
 
     database.insert_clip_urls(verified_clip_urls)
 
+    vid_objs = []
+    for filename in os.listdir('db/tmp'):
+        if filename.endswith('.mp4'):
+            vid_objs.append(VideoFileClip(f'db/tmp/{filename}'))
+
+    compiled_vid = concatenate_videoclips(vid_objs)
+    compiled_vid.write_videofile('compiled-vid.mp4')
+    print("Vid compiled!")
     #then compile the clips randomly into a vid
     #then upload vid
     #then delete the local clips, but keep the vid

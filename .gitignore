@@ -66,6 +66,7 @@ db.sqlite3-journal
 
 # temporary stuff
 tmp/
+*.mp4
 
 # Flask stuff:
 instance/
