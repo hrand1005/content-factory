@@ -11,18 +11,24 @@ def parse_args():
         help="Name of the preset with configurations for content regurgitation.")
     args = parser.parse_args()
 
-    return args.preset
+    return args.preset.lower()
 
 
 def main():
     preset = parse_args()
 
-    if preset == "PremiumMelee":
+    # TODO: Find out a better way to select strategies at runtime
+    if preset == "premiummelee":
         strategy = content.PremiumMelee()
-        database = db.ClipDatabase(preset)
+    elif preset == "darksouls": 
+        strategy = content.DarkSouls()
+    elif preset == "sekiro": 
+        strategy = content.Sekiro()
     else:
         print(f"Strategy '{preset}' not found. \nExiting...")
         exit(1)
+
+    database = db.ClipDatabase(preset)
 
     clips = strategy.fetch_clips()
     clip_urls = clip.just_urls(clips)
@@ -43,14 +49,24 @@ def main():
 
     database.insert_clip_urls(verified_clip_urls)
 
-    vid_objs = []
-    for filename in os.listdir('db/tmp'):
-        if filename.endswith('.mp4'):
-            vid_objs.append(VideoFileClip(f'db/tmp/{filename}'))
+    # linux terminal commands to compile method
+    # if we go with this, remember to add it ot a requirements.txt
+    # NOTE: Works, but produces some errors in the video output. 
+    # with open('clips.txt', 'w') as f:    
+    #     for filename in os.listdir('db/tmp'):
+    #         if filename.endswith('.mp4'):
+    #             f.write(f"file 'db/tmp/{filename}\n")
 
-    compiled_vid = concatenate_videoclips(vid_objs)
-    compiled_vid.write_videofile('compiled-vid.mp4')
-    print("Vid compiled!")
+    # TODO: This method of compiling vids is quite slow. Optimize? Use .sh?
+    # vid_objs = []
+    # for filename in os.listdir('db/tmp'):
+    #     if filename.endswith('.mp4'):
+    #         vid_objs.append(VideoFileClip(f'db/tmp/{filename}'))
+
+    # compiled_vid = concatenate_videoclips(vid_objs, method='compose')
+    # compiled_vid.write_videofile('compiled-vid.mp4')
+    # print("Vid compiled!")
+
     #then compile the clips randomly into a vid
     #then upload vid
     #then delete the local clips, but keep the vid

@@ -1,0 +1,1 @@
+ffmpeg -f concat -i clips.txt -c copy compiled-vid.mp4

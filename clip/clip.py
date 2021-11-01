@@ -31,4 +31,7 @@ def download_clips(clips, clip_urls):
         mp4_url = thumb_url.split("-preview",1)[0] + ".mp4"
         out_filename = slug + ".mp4"
         output_path = (basepath + out_filename)
-        urllib.request.urlretrieve(mp4_url, output_path, reporthook=dl_progress)
+        try: 
+            urllib.request.urlretrieve(mp4_url, output_path, reporthook=dl_progress)
+        except: 
+            print(f"Could not retrieve a clip: {mp4_url}")
