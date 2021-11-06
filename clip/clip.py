@@ -1,4 +1,5 @@
 # This library contains tools to manage clips -- get their urls, download them, etc.
+# TODO: these could be part of the content strategies --> think supporting other apis
 
 import sys
 import urllib.request
