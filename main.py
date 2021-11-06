@@ -52,10 +52,10 @@ def main():
     # linux terminal commands to compile method
     # if we go with this, remember to add it ot a requirements.txt
     # NOTE: Works, but produces some errors in the video output. 
-    # with open('clips.txt', 'w') as f:    
-    #     for filename in os.listdir('db/tmp'):
-    #         if filename.endswith('.mp4'):
-    #             f.write(f"file 'db/tmp/{filename}\n")
+    with open('clips.txt', 'w') as f:    
+        for filename in os.listdir('db/tmp'):
+            if filename.endswith('.mp4'):
+                f.write(f"file 'db/tmp/{filename}\n")
 
     # TODO: This method of compiling vids is quite slow. Optimize? Use .sh?
     # vid_objs = []
