@@ -7,14 +7,19 @@ Setup:
 
 pip3 install -r requirements.txt
 
-# set up twitch cli:
+## set up twitch cli:
+
 brew install twitchdev/twitch/twitch-cli
+
 twitch configure
+
 twitch token
 
-# set up empty files / directories? 
+## set up empty files / directories? 
+
 mkdir /db/tmp
+
 touch clips.txt
 
-# set up ffmpeg? install those dependencies?
+## set up ffmpeg? install those dependencies?
 
