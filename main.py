@@ -32,17 +32,16 @@ def main():
         exit(1)
 
     database = db.ClipDatabase(preset)
-
     clips = strategy.fetch_clips()
-    clip_urls = content.just_urls(clips)
 
     if len(clips) == 0:
         print("No new clips to fetch for PremiumMelee.\nExiting...")
         exit(1)
 
-    verified_clip_urls = database.verify_clip_urls(clip_urls)
+    verified_clips = database.verify_clips(clips)
+    print(f"Verified clips: {verified_clips}")
     
-    if len(verified_clip_urls) == 0:
+    if len(verified_clips) == 0:
         print("Retrieved clips already exist in the db.\nExiting...")
         exit(1)
 
@@ -52,7 +51,7 @@ def main():
     print_status(dl_status)
 
     # TODO: is this the right place to do this? --> may want to move to after publishing step
-    database.insert_clip_urls(verified_clip_urls)
+    database.insert_clips(verified_clips)
 
     # TODO: further vid editing before encoding and compilation step 
 

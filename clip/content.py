@@ -131,13 +131,14 @@ class Sekiro(ContentCompiler):
         # return filtered_results
         
 
+######### HELPER FUNCTIONS ##########
+
 ## yoinked this from some dude on github
 def dl_progress(count, block_size, total_size):
     percent = int(count * block_size * 100 / total_size)
     sys.stdout.write("\r...%d%%" % percent)
     sys.stdout.flush()
 
-# TODO: Some error handling might be nice
 def download_clips(clips):
     clip_dir = "db/tmp/"
     success = []
@@ -161,14 +162,6 @@ def download_clips(clips):
     return success
 
 
-# converts python dictionaries objects retrieved from twtich to just the urls
-# they contain. 
-# TODO: remove this eventually
-def just_urls(clip_dicts):
-    urls = []
-    for clip in clip_dicts:
-        urls.append(clip["url"])
-    
-    return urls
-
-
+# def getToken():
+#     stream = os.popen("twitch token")
+#     return stream.read().split()[-1]

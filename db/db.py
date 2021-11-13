@@ -21,18 +21,20 @@ class ClipDatabase():
         self.session = Session()
         self.db_conn = self.engine.connect()
 
-    def insert_clip_urls(self, clips):
+    def insert_clips(self, clips):
         for clip in clips:
-            stmt = insert(self.table).values(url=clip).prefix_with('OR IGNORE')
+            clip_url = clip["url"]
+            stmt = insert(self.table).values(url=clip_url).prefix_with('OR IGNORE')
             self.db_conn.execute(stmt)
         
         self.session.commit()
 
-    def verify_clip_urls(self, clips):
-        verified_unique_urls = []
-        for url in clips:
+    def verify_clips(self, clips):
+        verified_clips = []
+        for clip in clips:
             # stmt = select.where(self.table.c.url == url)
+            url = clip["url"]
             if not self.session.query(exists().where(self.table.c.url == url)).scalar():
-                verified_unique_urls.append(url)
+                verified_clips.append(clip)
         
-        return verified_unique_urls
+        return verified_clips
