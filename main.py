@@ -1,5 +1,5 @@
 import argparse
-from clip import content, clip
+from clip import content 
 from db import db
 
 
@@ -12,6 +12,10 @@ def parse_args():
 
     return args.preset.lower()
 
+def print_status(status_obj):
+    print(f"\nSuccessfully yoinked {len(status_obj)} objects:")
+    for status in status_obj:
+        print(f"{status}")
 
 def main():
     preset = parse_args()
@@ -30,7 +34,7 @@ def main():
     database = db.ClipDatabase(preset)
 
     clips = strategy.fetch_clips()
-    clip_urls = clip.just_urls(clips)
+    clip_urls = content.just_urls(clips)
 
     if len(clips) == 0:
         print("No new clips to fetch for PremiumMelee.\nExiting...")
@@ -44,14 +48,15 @@ def main():
 
     # TODO: error handling might be nice, return information about how many 
     # clips were downloaded successfully
-    clip.download_clips(clips, verified_clip_urls)
+    dl_status = content.download_clips(clips)
+    print_status(dl_status)
 
     # TODO: is this the right place to do this? --> may want to move to after publishing step
     database.insert_clip_urls(verified_clip_urls)
 
     # TODO: further vid editing before encoding and compilation step 
 
-    print(f"Latest clips yoinked for {preset}! To compile, run ./compile_clips.sh")
+    print(f"\nLatest clips yoinked for {preset}! To compile, run ./compile_clips.sh")
 
     #then upload vid
     #then delete the local clips, but keep the vid

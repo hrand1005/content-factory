@@ -1,6 +1,7 @@
 # Contains content constants and strategies, each inheriting from
 # an abstract base class 'ContentCompiler'
-
+import sys
+import urllib.request
 import os
 import json
 from abc import ABC, abstractmethod
@@ -104,7 +105,7 @@ class Sekiro(ContentCompiler):
         self.games = [SEKIRO]
         self.queries = []
 
-        base_query = "twitch api get clips -q first=20"
+        base_query = "twitch api get clips -q first=3"
         for game in self.games:
             self.queries.append(f"{base_query} -q game_id={game}")
 
@@ -127,5 +128,47 @@ class Sekiro(ContentCompiler):
         # for clip in all_clips:
         #     if clip["game_id"] == MELEE:
         #         filtered_results.append(clip)
-        
         # return filtered_results
+        
+
+## yoinked this from some dude on github
+def dl_progress(count, block_size, total_size):
+    percent = int(count * block_size * 100 / total_size)
+    sys.stdout.write("\r...%d%%" % percent)
+    sys.stdout.flush()
+
+# TODO: Some error handling might be nice
+def download_clips(clips):
+    clip_dir = "db/tmp/"
+    success = []
+
+    for i in range(len(clips)):
+        clip_url = clips[i]['url']
+        name = clip_url.rpartition("/")[-1]
+
+        thumb_url = clips[i]["thumbnail_url"]
+        mp4_url = thumb_url.split("-preview",1)[0] + ".mp4"
+
+        out_filename = name + ".mp4"
+        output_path = (clip_dir + out_filename)
+
+        try: 
+            urllib.request.urlretrieve(mp4_url, output_path, reporthook=dl_progress)
+            success.append(mp4_url)
+        except: 
+            print(f"Could not retrieve a clip: {mp4_url}") 
+
+    return success
+
+
+# converts python dictionaries objects retrieved from twtich to just the urls
+# they contain. 
+# TODO: remove this eventually
+def just_urls(clip_dicts):
+    urls = []
+    for clip in clip_dicts:
+        urls.append(clip["url"])
+    
+    return urls
+
+
