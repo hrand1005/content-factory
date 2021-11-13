@@ -45,8 +45,6 @@ def main():
         print("Retrieved clips already exist in the db.\nExiting...")
         exit(1)
 
-    # TODO: error handling might be nice, return information about how many 
-    # clips were downloaded successfully
     dl_status = content.download_clips(clips)
     print_status(dl_status)
 
