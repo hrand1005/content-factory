@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import argparse
-import httplib
+import http.client as httplib
 import httplib2
 import os
 import random
@@ -104,31 +104,31 @@ def resumable_upload(request):
   retry = 0
   while response is None:
     try:
-      print 'Uploading file...'
+      print(f"Uploading file...")
       status, response = request.next_chunk()
       if response is not None:
         if 'id' in response:
-          print 'Video id "%s" was successfully uploaded.' % response['id']
+          print(f'Video id "%s" was successfully uploaded.' % response['id'])
         else:
           exit('The upload failed with an unexpected response: %s' % response)
-    except HttpError, e:
+    except HttpError as e:
       if e.resp.status in RETRIABLE_STATUS_CODES:
         error = 'A retriable HTTP error %d occurred:\n%s' % (e.resp.status,
                                                              e.content)
       else:
         raise
-    except RETRIABLE_EXCEPTIONS, e:
+    except RETRIABLE_EXCEPTIONS as e:
       error = 'A retriable error occurred: %s' % e
 
     if error is not None:
-      print error
+      print(f"{error}")
       retry += 1
       if retry > MAX_RETRIES:
         exit('No longer attempting to retry.')
 
       max_sleep = 2 ** retry
       sleep_seconds = random.random() * max_sleep
-      print 'Sleeping %f seconds and then retrying...' % sleep_seconds
+      print(f'Sleeping {sleep_seconds} seconds and then retrying...') 
       time.sleep(sleep_seconds)
 
 if __name__ == '__main__':
@@ -150,5 +150,5 @@ if __name__ == '__main__':
 
   try:
     initialize_upload(youtube, args)
-  except HttpError, e:
-    print 'An HTTP error %d occurred:\n%s' % (e.resp.status, e.content)
+  except HttpError as e:
+    print(f'An HTTP error {e.resp.status} occurred:\n{e.content}')
