@@ -72,7 +72,7 @@ class DarkSouls(ContentCompiler):
         self.games = [DS1, DS2, DS3]
         self.queries = []
 
-        base_query = "twitch api get clips -q first=20"
+        base_query = "twitch api get clips -q first=4"
         for game in self.games:
             self.queries.append(f"{base_query} -q game_id={game}")
 
