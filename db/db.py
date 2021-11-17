@@ -10,10 +10,10 @@ class ClipDatabase():
         self.engine = create_engine(f"sqlite:///db/{name}.db")
         self.metadata_obj = MetaData()
 
-        self.table = Table('clips', self.metadata_obj,
-            Column('id', Integer, primary_key=True),
-            Column('url', String(100), nullable=False, unique=True),
-            Column('time_entered', DateTime, default=datetime.datetime.now())
+        self.table = Table("clips", self.metadata_obj,
+            Column("id", Integer, primary_key=True),
+            Column("url", String(100), nullable=False, unique=True),
+            Column("time_entered", DateTime, default=datetime.datetime.now())
         )
 
         self.metadata_obj.create_all(self.engine)
@@ -24,7 +24,7 @@ class ClipDatabase():
     def insert_clips(self, clips):
         for clip in clips:
             clip_url = clip["url"]
-            stmt = insert(self.table).values(url=clip_url).prefix_with('OR IGNORE')
+            stmt = insert(self.table).values(url=clip_url).prefix_with("OR IGNORE")
             self.db_conn.execute(stmt)
         
         self.session.commit()
@@ -32,7 +32,6 @@ class ClipDatabase():
     def verify_clips(self, clips):
         verified_clips = []
         for clip in clips:
-            # stmt = select.where(self.table.c.url == url)
             url = clip["url"]
             if not self.session.query(exists().where(self.table.c.url == url)).scalar():
                 verified_clips.append(clip)
