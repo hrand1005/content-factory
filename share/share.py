@@ -70,6 +70,7 @@ def parse_args():
 def get_authenticated_service():
     # TODO: remove this unnecessary bullshit
     flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_FILE, SCOPES)
+    # type google.oauth2.credentials.Credentials
     credentials = flow.run_console()
 
     # builds googleapi object, in this case an instance of a youtube object that 
@@ -97,6 +98,8 @@ def initialize_upload(youtube, options):
 # Call the API"s videos.insert method to create and upload the video.
     insert_request = youtube.videos().insert(part=",".join(body.keys()), body=body,
         media_body=MediaFileUpload(options.file, chunksize=-1, resumable=True))
+    # insert_request is of type googleapiclient.http.HttpRequest
+
 # The chunksize parameter specifies the size of each chunk of data, in
 # bytes, that will be uploaded at a time. Set a higher value for
 # reliable connections as fewer chunks lead to faster uploads. Set a lower
