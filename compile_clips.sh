@@ -1,4 +1,5 @@
 CLIPS="./db/tmp/*.mp4"
+
 for file in $CLIPS
 do
     echo "Formatting $file"

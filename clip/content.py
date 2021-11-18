@@ -139,8 +139,7 @@ def dl_progress(count, block_size, total_size):
     sys.stdout.write("\r...%d%%" % percent)
     sys.stdout.flush()
 
-def download_clips(clips):
-    clip_dir = "db/tmp/"
+def download_clips(clips, clip_dir):
     success = []
 
     for i in range(len(clips)):

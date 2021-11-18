@@ -1,7 +1,10 @@
 import argparse
+import os
 from clip import content 
 from db import db
+from compile import compile
 
+CLIP_DIR = "./db/tmp/"
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -39,13 +42,13 @@ def main():
         exit(1)
 
     verified_clips = database.verify_clips(clips)
-    print(f"Verified clips: {verified_clips}")
+    print(f"Found {len(verified_clips)} verified clips, tryna yoink.")
     
     if len(verified_clips) == 0:
         print("Retrieved clips already exist in the db.\nExiting...")
         exit(1)
 
-    dl_status = content.download_clips(clips)
+    dl_status = content.download_clips(clips, CLIP_DIR)
     print_status(dl_status)
 
     # TODO: is this the right place to do this? --> may want to move to after publishing step
@@ -53,7 +56,15 @@ def main():
 
     # TODO: further vid editing before encoding and compilation step 
 
-    print(f"\nLatest clips yoinked for {preset}! To compile, run ./compile_clips.sh")
+    print(f"\nLatest clips yoinked for {preset}!")
+    compile_flag = input("Ready to compile? [Y/N]\n")
+
+    if compile_flag.lower()[0] == "y":
+        # compile.compile_clips()
+        os.system("./compile_clips.sh")
+    else:
+        print("Exiting...")
+        exit(0)
 
     #then upload vid
     #then delete the local clips, but keep the vid
