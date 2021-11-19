@@ -16,6 +16,7 @@ imageio-ffmpeg==0.4.5
 moviepy==1.0.3
 numpy==1.21.3
 oauthlib==3.1.1
+opencv-python==4.5.4.58
 Pillow==8.4.0
 proglog==0.1.9
 protobuf==3.19.1

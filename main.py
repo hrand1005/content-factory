@@ -44,6 +44,7 @@ def main():
     verified_clips = database.verify_clips(clips)
     print(f"Found {len(verified_clips)} verified clips, tryna yoink.")
     
+    # TODO: implement smarter handling here?
     if len(verified_clips) == 0:
         print("Retrieved clips already exist in the db.\nExiting...")
         exit(1)
@@ -55,6 +56,10 @@ def main():
     database.insert_clips(verified_clips)
 
     # TODO: further vid editing before encoding and compilation step 
+    print("Editing clips...")
+    for clip in clips:
+        print(clip)
+        compile.apply_overlay(clip)
 
     print(f"\nLatest clips yoinked for {preset}!")
     compile_flag = input("Ready to compile? [Y/N]\n")
