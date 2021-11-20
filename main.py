@@ -48,7 +48,7 @@ def main():
         print("Retrieved clips already exist in the db.\nExiting...")
         exit(1)
 
-    dl_status = content.download_clips(clips, CLIP_DIR)
+    dl_status = content.download_clips(verified_clips, CLIP_DIR)
     print_status(dl_status)
 
     # TODO: is this the right place to do this? --> may want to move to after publishing step
@@ -57,11 +57,28 @@ def main():
     # TODO: further vid editing before encoding and compilation step 
 
     print(f"\nLatest clips yoinked for {preset}!")
-    compile_flag = input("Ready to compile? [Y/N]\n")
+    compile_flag = input("Ready to edit and compile? [Y/N]\n")
+
 
     if compile_flag.lower()[0] == "y":
-        # compile.compile_clips()
-        os.system("./compile_clips.sh")
+        edited_clips = []
+        print("applying overlays...")
+        for clip in verified_clips: 
+            out_dir = "compile/tmp/"
+            # TODO: unify this logic somewhere. Maybe a class for a clip object so
+            # we can have one thing to refer to? think: verified flags, name,
+            # filename, preprocessed path, postprocessed path, etc.
+            clip_url = clip['url']
+            filename = f"{clip_url.rpartition('/')[-1]}.mp4"
+
+            clip_path = f"{CLIP_DIR}{filename}"
+            edited_clip = compile.apply_overlay(clip, clip_path, out_dir)
+            edited_clips.append(edited_clip)
+
+        print("compiling...")
+        print(f"compiling these clips: {edited_clips}")
+        compile.compile_clips(edited_clips)
+        # os.system("./compile_clips.sh")
     else:
         print("Exiting...")
         exit(0)
