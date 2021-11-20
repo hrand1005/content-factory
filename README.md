@@ -20,6 +20,7 @@ twitch token
 ## set up empty files / directories? 
 
 ```
+mkdir /compile/tmp
 mkdir /db/tmp
 touch clips.txt
 ```

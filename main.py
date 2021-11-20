@@ -54,11 +54,9 @@ def main():
     # TODO: is this the right place to do this? --> may want to move to after publishing step
     database.insert_clips(verified_clips)
 
-    # TODO: further vid editing before encoding and compilation step 
-
+    # prompts user to manually compile -- used for testing
     print(f"\nLatest clips yoinked for {preset}!")
     compile_flag = input("Ready to edit and compile? [Y/N]\n")
-
 
     if compile_flag.lower()[0] == "y":
         edited_clips = []
@@ -80,11 +78,23 @@ def main():
         compile.compile_clips(edited_clips)
         # os.system("./compile_clips.sh")
     else:
-        print("Exiting...")
+        print("Exiting without compiling...")
         exit(0)
 
     #then upload vid
     #then delete the local clips, but keep the vid
+
+    # prompts user to manually upload -- used for testing
+    print(f"\nVid compiled for {preset}!")
+    upload_flag = input("Ready to upload? [Y/N]\n")
+
+    if upload_flag.lower()[0] == "y":
+        print("Uploading...")
+        cmd = f"python3 share/share.py --file compiled-vid.mp4 --privacyStatus private --title {preset}-prototype"
+        os.system(cmd)
+    else:
+        print("Exiting without uploading...")
+        exit(0)
 
 if __name__ == "__main__":
     main()

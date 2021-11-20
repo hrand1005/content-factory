@@ -44,7 +44,7 @@ RETRIABLE_STATUS_CODES = [500, 502, 503, 504]
 # For more information about the client_secrets.json file format, see:
 #   https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 # TODO: find out the right way to load secrets / keys (env variable?)
-CLIENT_SECRETS_FILE = "client_secret.json"
+CLIENT_SECRETS_FILE = "share/client_secret.json"
 
 # OAuth 2.0 Access scope limits app access to authenticated user's channel
 SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
