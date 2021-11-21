@@ -16,8 +16,12 @@ def parse_args():
         description="Download clips, compile them into a video, and upload it to youtube.")
     parser.add_argument('--preset',
         help="Name of the preset with configurations for content regurgitation.")
+    parser.add_argument("-c", action="store_true", 
+        help="Option to edit and compile clips.")
+    parser.add_argument("-u", action="store_true", 
+        help="Option to upload processed video to youtube.")
     args = parser.parse_args()
-    return args.preset.lower()
+    return args
 
 
 # prints the number and paths of the downloaded content
@@ -27,9 +31,18 @@ def print_status(status_obj):
         print(f"{status}")
 
 
+# constructs arguments for youtube upload script, executes
+def upload_to_youtube(preset):
+    file_arg = f"--file {FINAL_PRODUCT}"
+    priv_arg = "--privacyStatus private"
+    title_arg = f"--title {preset}-prototype"
+    os.system(f"python3 share/share.py {file_arg} {priv_arg} {title_arg}")
+
+
 def main():
     # TODO: Find out a better way to select strategies at runtime
-    preset = parse_args()
+    args = parse_args()
+    preset = args.preset.lower()
     if preset == "premiummelee":
         strategy = content.PremiumMelee()
     elif preset == "darksouls": 
@@ -39,6 +52,7 @@ def main():
     else:
         print(f"Strategy '{preset}' not found. \nExiting...")
         exit(1)
+
     # initialize database
     database = db.ClipDatabase(preset)
 
@@ -58,30 +72,17 @@ def main():
     dl_status = content.download_clips(verified_clips, RAW_DIR)
     print_status(dl_status)
 
-    # prompts user to manually compile -- used for testing
-    print(f"\nLatest clips yoinked for {preset}!")
-    compile_flag = input("Ready to edit and compile? [Y/N]\n")
-    if compile_flag.lower()[0] == "y":
-        edited_clips = []
-        for clip in verified_clips: 
-            filename = f"{clip['url'].rpartition('/')[-1]}.mp4"
-            clip_path = f"{RAW_DIR}{filename}"
-            # apply text overlay here, other processing should happen here
-            edited_clip = compile.apply_overlay(clip, clip_path, PROCESSED_DIR)
-            edited_clips.append(edited_clip)
+    # compile step, opt in with -c
+    if args.c: 
+        edited_clips = compile.edit_clips(verified_clips, RAW_DIR, PROCESSED_DIR)
         compile.compile_clips(edited_clips)
     else:
         print("Exiting without compiling...")
         exit(0)
 
-    # prompts user to manually upload -- used for testing
-    print(f"\nVid compiled for {preset}!")
-    upload_flag = input("Ready to upload? [Y/N]\n")
-    if upload_flag.lower()[0] == "y":
-        file_arg = f"--file {FINAL_PRODUCT}"
-        priv_arg = "--privacyStatus private"
-        title_arg = f"--title {preset}-prototype"
-        os.system(f"python3 share/share.py {file_arg} {priv_arg} {title_arg}")
+    # upload step, opt in with -u
+    if args.u:
+        upload_to_youtube(preset)
     else:
         print("Exiting without uploading...")
         exit(0)
