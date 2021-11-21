@@ -154,7 +154,7 @@ def download_clips(clips, clip_dir):
 
         try: 
             urllib.request.urlretrieve(mp4_url, output_path, reporthook=dl_progress)
-            success.append(mp4_url)
+            success.append(output_path)
         except: 
             print(f"Could not retrieve a clip: {mp4_url}") 
 
