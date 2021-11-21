@@ -5,6 +5,7 @@ import datetime
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 
+#TODO: make this slightly more generic, content instead of clips
 class ClipDatabase():
     def __init__(self, name):    
         self.engine = create_engine(f"sqlite:///db/{name}.db")

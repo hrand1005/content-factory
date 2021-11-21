@@ -1,9 +1,9 @@
 import argparse
 import os
-from clip import content 
+from strategy import strategy
+from clip import content
 from db import db
 from compile import compile
-
 
 RAW_DIR = "db/tmp/"
 PROCESSED_DIR = "compile/tmp/"
@@ -43,12 +43,11 @@ def main():
     # TODO: Find out a better way to select strategies at runtime
     args = parse_args()
     preset = args.preset.lower()
-    if preset == "premiummelee":
-        strategy = content.PremiumMelee()
-    elif preset == "darksouls": 
-        strategy = content.DarkSouls()
-    elif preset == "sekiro": 
-        strategy = content.Sekiro()
+
+    if preset == "sekiro": 
+        print(content.SEKIRO)
+        query = [f"twitch api get clips -q first=3 -q game_id={content.SEKIRO}"]
+        intf = strategy.TwitchStrategy("Sekiro", query) 
     else:
         print(f"Strategy '{preset}' not found. \nExiting...")
         exit(1)
@@ -57,9 +56,9 @@ def main():
     database = db.ClipDatabase(preset)
 
     # fetch clips using strategy
-    clips = strategy.fetch_clips()
+    clips = intf.get_data()
     if len(clips) == 0:
-        print("No new clips to fetch for PremiumMelee.\nExiting...")
+        print("No new clips to fetch for {preset}.\nExiting...")
         exit(1)
 
     # verify that the clips don't already existin the database
@@ -69,7 +68,12 @@ def main():
         exit(1)
 
     # download the verified clips, print the status
-    dl_status = content.download_clips(verified_clips, RAW_DIR)
+    # TODO: some retry-able download strategy like the folloiwng:
+    # While not enough verified clips or not at max retries:
+        # get next batch of clips (new query?)
+        # increment retries
+
+    dl_status = intf.download(verified_clips, RAW_DIR)
     print_status(dl_status)
 
     # compile step, opt in with -c
