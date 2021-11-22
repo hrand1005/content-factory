@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 
 class Strategy(ABC):
     @abstractmethod
-    def get_data():
+    def get_content():
         pass
 
     @abstractmethod
@@ -18,7 +18,7 @@ class TwitchStrategy(Strategy):
         self.name = name 
         self.queries = queries
 
-    def get_data(self):
+    def get_content(self):
         clips = self._aggregate_clips()
         if len(clips) == 0:
             print("No clips found for this strategy.")

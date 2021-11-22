@@ -13,11 +13,11 @@ FINAL_PRODUCT = "compiled-vid.mp4"
 # parses args, ie preset
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Download clips, compile them into a video, and upload it to youtube.")
+        description="Download content, compile them into a video, and upload it to youtube.")
     parser.add_argument('--preset',
         help="Name of the preset with configurations for content regurgitation.")
     parser.add_argument("-c", action="store_true", 
-        help="Option to edit and compile clips.")
+        help="Option to edit and compile content.")
     parser.add_argument("-u", action="store_true", 
         help="Option to upload processed video to youtube.")
     args = parser.parse_args()
@@ -53,33 +53,33 @@ def main():
         exit(1)
 
     # initialize database
-    database = db.ClipDatabase(preset)
+    database = db.ContentDatabase(preset)
 
-    # fetch clips using strategy
-    clips = intf.get_data()
-    if len(clips) == 0:
-        print("No new clips to fetch for {preset}.\nExiting...")
+    # fetch content using strategy
+    content_objs = intf.get_content()
+    if len(content_objs) == 0:
+        print("No new content to fetch for {preset}.\nExiting...")
         exit(1)
 
-    # verify that the clips don't already existin the database
-    verified_clips = database.verify_clips(clips)
-    if len(verified_clips) == 0:
-        print("Retrieved clips already exist in the db.\nExiting...")
+    # verify that the content don't already existin the database
+    verified_content = database.verify_content(content_objs)
+    if len(verified_content) == 0:
+        print("Retrieved content already exist in the db.\nExiting...")
         exit(1)
 
-    # download the verified clips, print the status
+    # download the verified content, print the status
     # TODO: some retry-able download strategy like the folloiwng:
-    # While not enough verified clips or not at max retries:
-        # get next batch of clips (new query?)
+    # While not enough verified content or not at max retries:
+        # get next batch of content (new query?)
         # increment retries
 
-    dl_status = intf.download(verified_clips, RAW_DIR)
+    dl_status = intf.download(verified_content, RAW_DIR)
     print_status(dl_status)
 
     # compile step, opt in with -c
     if args.c: 
-        edited_clips = compile.edit_clips(verified_clips, RAW_DIR, PROCESSED_DIR)
-        compile.compile_clips(edited_clips)
+        edited_content = compile.edit_content(verified_content, RAW_DIR, PROCESSED_DIR)
+        compile.compile_content(edited_content)
     else:
         print("Exiting without compiling...")
         exit(0)
@@ -91,9 +91,9 @@ def main():
         print("Exiting without uploading...")
         exit(0)
 
-    # add the clips from the uploaded vid to the database
-    # TODO: decide how to handle verified clips that haven't been downlaoded
-    database.insert_clips(verified_clips)
+    # add the content from the uploaded vid to the database
+    # TODO: decide how to handle verified content that haven't been downlaoded
+    database.insert_content(verified_content)
 
 if __name__ == "__main__":
     main()
