@@ -1,9 +1,8 @@
-import argparse
-import os
+import argparse, os, yaml
 from strategy import strategy
-from clip import content
 from db import db
 from compile import compile
+
 
 RAW_DIR = "db/tmp/"
 PROCESSED_DIR = "compile/tmp/"
@@ -14,8 +13,8 @@ FINAL_PRODUCT = "compiled-vid.mp4"
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Download content, compile them into a video, and upload it to youtube.")
-    parser.add_argument('--preset',
-        help="Name of the preset with configurations for content regurgitation.")
+    parser.add_argument("--file",
+        help="Name of yaml file with configurations for content regurgitation.")
     parser.add_argument("-c", action="store_true", 
         help="Option to edit and compile content.")
     parser.add_argument("-u", action="store_true", 
@@ -32,33 +31,27 @@ def print_status(status_obj):
 
 
 # constructs arguments for youtube upload script, executes
-def upload_to_youtube(preset):
+def upload_to_youtube(name):
     file_arg = f"--file {FINAL_PRODUCT}"
     priv_arg = "--privacyStatus private"
-    title_arg = f"--title {preset}-prototype"
+    title_arg = f"--title {name}-prototype"
     os.system(f"python3 share/share.py {file_arg} {priv_arg} {title_arg}")
 
 
 def main():
-    # TODO: Find out a better way to select strategies at runtime
     args = parse_args()
-    preset = args.preset.lower()
+    # load context from file
+    with open(args.file, "r") as f:
+        context = yaml.safe_load(f)
 
-    if preset == "sekiro": 
-        print(content.SEKIRO)
-        query = [f"twitch api get clips -q first=3 -q game_id={content.SEKIRO}"]
-        intf = strategy.TwitchStrategy("Sekiro", query) 
-    else:
-        print(f"Strategy '{preset}' not found. \nExiting...")
-        exit(1)
-
-    # initialize database
-    database = db.ContentDatabase(preset)
+    # use context to initialize strategy and database
+    concrete_strategy = strategy.select_strategy(context["source"], context["params"])
+    database = db.ContentDatabase(context["name"])
 
     # fetch content using strategy
-    content_objs = intf.get_content()
+    content_objs = concrete_strategy.get_content()
     if len(content_objs) == 0:
-        print("No new content to fetch for {preset}.\nExiting...")
+        print("No new content to fetch for {context['name']}.\nExiting...")
         exit(1)
 
     # verify that the content don't already existin the database
@@ -67,13 +60,8 @@ def main():
         print("Retrieved content already exist in the db.\nExiting...")
         exit(1)
 
-    # download the verified content, print the status
-    # TODO: some retry-able download strategy like the folloiwng:
-    # While not enough verified content or not at max retries:
-        # get next batch of content (new query?)
-        # increment retries
-
-    dl_status = intf.download(verified_content, RAW_DIR)
+    # download content, print status TODO: retry downloading if fails?
+    dl_status = concrete_strategy.download(verified_content, RAW_DIR)
     print_status(dl_status)
 
     # compile step, opt in with -c
@@ -86,7 +74,7 @@ def main():
 
     # upload step, opt in with -u
     if args.u:
-        upload_to_youtube(preset)
+        upload_to_youtube(context["name"])
     else:
         print("Exiting without uploading...")
         exit(0)

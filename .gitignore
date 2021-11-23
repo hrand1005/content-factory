@@ -137,3 +137,6 @@ client_secret.json
 
 # Pyre type checker
 .pyre/
+
+# yaml files
+*.yaml

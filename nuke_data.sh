@@ -2,5 +2,5 @@
 rm db/tmp/*
 rm db/*.db
 rm compile/tmp/*
-rm clips.txt
+rm content.txt
 rm compiled-vid.mp4

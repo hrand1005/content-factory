@@ -4,6 +4,15 @@ import json
 import urllib.request
 from abc import ABC, abstractmethod
 
+
+def select_strategy(strategy, params):
+    if strategy.lower() == "twitch":
+        return TwitchStrategy(params["name"], params["queries"])
+    else:
+        print("Strategy {context.source} not implemented.\nExiting...")
+        exit(1)
+
+
 class Strategy(ABC):
     @abstractmethod
     def get_content():
@@ -12,6 +21,7 @@ class Strategy(ABC):
     @abstractmethod
     def download():
         pass
+
 
 class TwitchStrategy(Strategy):
     def __init__(self, name, queries): #TODO:maybe add creators and games params?
@@ -30,11 +40,11 @@ class TwitchStrategy(Strategy):
         for clip in clips:
             mp4_url = self._get_mp4_url(clip)
             out_path = self._get_out_path(clip, out_dir)
-            #try: 
-            urllib.request.urlretrieve(mp4_url, out_path, reporthook=self._dl_progress)
-            success.append(out_path)
-            #except: 
-                #print(f"Could not retrieve a clip: {mp4_url}") 
+            try: 
+                urllib.request.urlretrieve(mp4_url, out_path, reporthook=self._dl_progress)
+                success.append(out_path)
+            except: 
+                print(f"Could not retrieve a clip: {mp4_url}") 
         return success
 
     def _get_out_path(self, clip, out_dir):
