@@ -42,7 +42,7 @@ class TwitchStrategy(Strategy):
             out_path = self._get_out_path(clip, out_dir)
             try: 
                 urllib.request.urlretrieve(mp4_url, out_path, reporthook=self._dl_progress)
-                success.append(out_path)
+                success.append(clip)
             except: 
                 print(f"Could not retrieve a clip: {mp4_url}") 
         return success

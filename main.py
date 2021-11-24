@@ -61,12 +61,12 @@ def main():
         exit(1)
 
     # download content, print status TODO: retry downloading if fails?
-    dl_status = concrete_strategy.download(verified_content, RAW_DIR)
-    print_status(dl_status)
+    fetched_content = concrete_strategy.download(verified_content, RAW_DIR)
+    print_status(fetched_content)
 
     # compile step, opt in with -c
     if args.c: 
-        edited_content = compile.edit_content(verified_content, RAW_DIR, PROCESSED_DIR)
+        edited_content = compile.edit_content(fetched_content, RAW_DIR, PROCESSED_DIR)
         compile.compile_content(edited_content)
     else:
         print("Exiting without compiling...")
@@ -81,7 +81,7 @@ def main():
 
     # add the content from the uploaded vid to the database
     # TODO: decide how to handle verified content that haven't been downlaoded
-    database.insert_content(verified_content)
+    database.insert_content(fetched_content)
 
 if __name__ == "__main__":
     main()
